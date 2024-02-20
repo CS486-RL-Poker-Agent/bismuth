@@ -1,13 +1,16 @@
 from pettingzoo.classic import texas_holdem_no_limit_v6
 from agent import REINFORCEAgent
+from typekit import SAR
 
 
 def episode(episode_agent: REINFORCEAgent):
     T = 0
-    rewards = []
+    steps: list[SAR] = []
     for agent in env.agent_iter():
         observation, reward, termination, truncation, info = env.last()
-        rewards.append(reward)
+
+        if steps:
+            steps[-1]["reward"] = reward
 
         if termination or truncation:
             action = None
@@ -16,9 +19,10 @@ def episode(episode_agent: REINFORCEAgent):
             # this is where you would insert your policy
             action = env.action_space(agent).sample(mask)
 
+        steps.append({"observation": observation, "action": action})
         env.step(action)
         T += 1
-    episode_agent.REINFORCE(T, rewards)
+    episode_agent.REINFORCE(T, steps)
     env.close()
 
 
