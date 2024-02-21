@@ -18,9 +18,13 @@ class REINFORCEAgent(Agent):
             G += self.gamma ** (k - t - 1) * rewards[k]
         return G
 
+    def getEligibilityVector(self):
+        return 0
+
     def updatePolicyParameters(self, t: int, G: int, state):
-        for parameter in self.theta:
-            parameter = self.alpha * self.gamma ** t * G
+        "TODO"
+        # for parameter in self.theta:
+        #     parameter += self.alpha * self.gamma ** t * G * self.getEligibilityVector()
 
     def REINFORCE(self, T: int, steps: list[SAR]):
         states = [step["state"] for step in steps]
