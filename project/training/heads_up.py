@@ -1,5 +1,5 @@
 from pettingzoo.classic import texas_holdem_no_limit_v6
-from agent import REINFORCEAgent
+from project.agent import REINFORCEAgent
 from custom_types import Step
 
 
