@@ -1,3 +1,3 @@
 DEFAULT_AGENT_NAME = "player_0"
-
 OBSERVATION_SPACE_SIZE = 69
+ACTION_MASK = "action_mask"
