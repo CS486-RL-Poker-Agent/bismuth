@@ -1,6 +1,6 @@
 import numpy as np
 from custom_types import Step
-from constants import DEFAULT_AGENT_NAME, OBSERVATION_SPACE_SIZE
+from constants import DEFAULT_AGENT_NAME, OBSERVATION_SPACE_SIZE, ACTION_MASK
 
 
 class Agent:
@@ -17,22 +17,24 @@ class REINFORCEAgent(Agent):
 
     def _compute_return_value(self, t: int, T: int, rewards: list[int]) -> int:
         G = 0
+        print("Rewards:", rewards)
         for k in range(t + 1, T):
             G += self._gamma ** (k - t - 1) * rewards[k]
         return G
 
     def _get_eligibility_vector(self, actions):
-        "TODO: Implement eligibility vector"
         return 0
 
     def _update_parameterized_policy(self, t: int, G: int, state):
         for parameter in self._theta:
-            parameter += self._alpha * self._gamma ** t * G * self._get_eligibility_vector()
+            parameter += self._alpha * self._gamma ** t * G * \
+                self._get_eligibility_vector(state[ACTION_MASK])
 
     def REINFORCE(self, T: int, steps: list[Step]):
         states = [step["state"] for step in steps]
         actions = [step["action"] for step in steps]
         rewards = [step["reward"] for step in steps]
+        print("T:", T)
         for t in range(T):
             G = self._compute_return_value(t, T, rewards)
             self._update_parameterized_policy(t, G, states[t])

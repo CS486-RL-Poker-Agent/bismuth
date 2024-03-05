@@ -1,6 +1,7 @@
 from pettingzoo.classic import texas_holdem_no_limit_v6
 from agent import REINFORCEAgent
 from custom_types import Step
+from constants import ACTION_MASK
 
 
 def generate_episode(episode_agent: REINFORCEAgent):
@@ -10,23 +11,21 @@ def generate_episode(episode_agent: REINFORCEAgent):
     T = 0
     steps: list[Step] = []
     for agent in env.agent_iter():
-        observation, reward, termination, truncation, info = env.last()
+        observation, reward, termination, truncation, _ = env.last()
 
         if termination or truncation:
             action = None
         else:
-            mask = observation["action_mask"]
+            mask = observation[ACTION_MASK]
             action = env.action_space(agent).sample(mask)
 
         if (agent == episode_agent.get_name()):
-            state = observation["observation"]
             # print(f"State @ step {T}", state)
-            steps.append({"state": state, "action": action})
+            steps.append({"state": observation, "action": action})
             if steps[-1]:
                 steps[-1]["reward"] = reward
-
+            T += 1
         env.step(action)
-        T += 1
     episode_agent.REINFORCE(T, steps)
     env.close()
 
